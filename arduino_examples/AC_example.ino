@@ -5,9 +5,9 @@
 #include <ArduinoJson.h>
 #include <StreamString.h>
 
-#define API_KEY "" // TODO: Change to your sinric API Key. Your API Key is displayed on sinric.com dashboard
-#define SSID_NAME "" // TODO: Change to your Wifi network SSID
-#define WIFI_PASSWORD "" // TODO: Change to your Wifi network password
+#define API_KEY ""//API Key on sinric.com dashboard
+#define SSID_NAME "2orsome-2.4G" // Wifi network SSID
+#define WIFI_PASSWORD "" // Wifi network password
 #define SERVER_URL "iot.sinric.com"
 #define SERVER_PORT 80 
 
@@ -30,6 +30,8 @@ void setup() {
   
   WiFiMulti.addAP(SSID_NAME, WIFI_PASSWORD);
   Serial.println();
+  Serial.print("esp MAC address: ");
+  Serial.println(WiFi.macAddress());
   Serial.print("Connecting to Wifi: ");
   Serial.println(SSID_NAME);  
 
@@ -106,7 +108,7 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
         String action = json ["action"];
         
         if(action == "setPowerState") {
-            // alexa, turn on speakers ==> {"deviceId":"xx","action":"setPowerState","value":"ON"}
+            // alexa, turn on a see ==> {"deviceId":"xx","action":"setPowerState","value":"ON"}
             String value = json ["value"];
             if(value == "ON") {
                 turnOn(deviceId);
@@ -114,9 +116,14 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
                 turnOff(deviceId);
             }        
         }
-        else if(action == "Pause") {
-            // alexa, pause speakers ==> {"deviceId":"xx","action":"Pause","value":{}}
-            
+        else if(action == "setMode") {
+            // alexa, mode a see ==> {"deviceId":"xx","action":"setMode","value":"HIGH"}
+            String value = json ["value"];
+            if(value == "HIGH") {
+                turnOn(deviceId);
+            } else if(value == "LOW") {
+                turnOff(deviceId);
+            }        
         }
         else if(action == "Play") {
             // alexa, pause speakers ==> {"deviceId":"xx","action":"Play","value":{}}
